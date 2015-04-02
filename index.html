@@ -8,6 +8,13 @@
       @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
       @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 
+      pre {
+       white-space: pre-wrap;       /* css-3 */
+       white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+       white-space: -pre-wrap;      /* Opera 4-6 */
+       white-space: -o-pre-wrap;    /* Opera 7 */
+       word-wrap: break-word;       /* Internet Explorer 5.5+ */
+      }
       body {
       font-family: 'Droid Serif';
     }
@@ -125,11 +132,16 @@ layout: true
 class: center, middle, inverse
 ---
 
-# Continuous deployement pipeline with Docker
+# Continuous deployment pipeline
+# with Docker
 
 @emilevauge
 ---
-## DevOps @ Zenika
+layout: false
+class: center, middle
+## DevOps
+## @
+![Docker](images/logo-zenika.jpg)
 ---
 layout: false
 class: center, middle
@@ -138,6 +150,10 @@ class: center, middle
 layout: false
 class: center, middle
 ![Swarm](images/swarm.png)
+---
+layout: false
+class: center, middle
+![Swarm](images/swarm-architecture.png)
 ---
 layout: false
 class: center, middle
@@ -157,13 +173,14 @@ class: center, middle
 ---
 layout: false
 class: center, middle
+## Pipeline stack
 ![Pipeline](images/pipeline.png)
 ---
 class: center, middle, inverse
 ## Demo
 ---
 .left-column[
-  ## Configuration
+  ## Cluster configuration
 ### - EC2 User data
 ]
 .right-column[
@@ -173,22 +190,13 @@ class: center, middle, inverse
 
 rancher:
     user_docker:
-        tls_args: |
-          [--tlsverify,
-          --tlscacert=ca.pem,
-          --tlscert=server-cert.pem,
-          --tlskey=server-key.pem,
-          '-H=0.0.0.0:2376']
-        args:  |
-          [docker, -d, -s,
-          overlay, -G, docker,
-          -H, 'unix:///var/run/docker.sock',
-          -H, 'tcp://0.0.0.0:2375']
+        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
+        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
 ```
 ]
 ---
 .left-column[
-  ## Configuration
+  ## Cluster configuration
 ### - EC2 User data
 ### - Swarm ID
 ]
@@ -200,17 +208,8 @@ rancher:
 
 rancher:
     user_docker:
-        tls_args: |
-          [--tlsverify,
-          --tlscacert=ca.pem,
-          --tlscert=server-cert.pem,
-          --tlskey=server-key.pem,
-          '-H=0.0.0.0:2376']
-        args:  |
-          [docker, -d, -s,
-          overlay, -G, docker,
-          -H, 'unix:///var/run/docker.sock',
-          -H, 'tcp://0.0.0.0:2375']
+        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
+        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
 ```
 
 
@@ -220,7 +219,7 @@ docker run --rm swarm create
 ]
 ---
 .left-column[
-  ## Configuration
+  ## Cluster configuration
 ### - EC2 User data
 ### - Swarm ID
 ### - Swarm agents
@@ -233,17 +232,8 @@ docker run --rm swarm create
 
 rancher:
     user_docker:
-        tls_args: |
-          [--tlsverify,
-          --tlscacert=ca.pem,
-          --tlscert=server-cert.pem,
-          --tlskey=server-key.pem,
-          '-H=0.0.0.0:2376']
-        args:  |
-          [docker, -d, -s,
-          overlay, -G, docker,
-          -H, 'unix:///var/run/docker.sock',
-          -H, 'tcp://0.0.0.0:2375']
+        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
+        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
 ```
 
 ```sh
@@ -251,21 +241,128 @@ docker run --rm swarm create
 ```
 
 ```sh
-ssh -i zenika.pem rancher@52.17.12.43 \
-  'docker run -d swarm join \
-  --addr=$(wget -qO- http://icanhazip.com):2375  \
-  token://5957ec97aa4b04b9b44932af2f2795f4'
+ssh rancher@52.17.12.43 'docker run -d swarm join --addr=$(wget -qO- http://icanhazip.com):2375 token://5957ec97aa4b04b9b44932af2f2795f4'
 ```
-
 ]
 
+---
+.left-column[
+  ## Cluster configuration
+### - EC2 User data
+### - Swarm ID
+### - Swarm agents
+### - Swarm manager
+]
+
+.right-column[
+
+```sh
+#cloud-config
+
+rancher:
+    user_docker:
+        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
+        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
+```
+
+```sh
+docker run --rm swarm create
+```
+
+```sh
+ssh rancher@52.17.12.43 'docker run -d swarm join --addr=$(wget -qO- http://icanhazip.com):2375 token://5957ec97aa4b04b9b44932af2f2795f4'
+```
+
+```sh
+ssh rancher@52.17.12.43 'docker run -d -p 5000:2375 swarm manage token://5957ec97aa4b04b9b44932af2f2795f4'
+```
+]
+
+---
+.left-column[
+  ## Cluster configuration
+### - EC2 User data
+### - Swarm ID
+### - Swarm agents
+### - Swarm manager
+### - Test
+]
+
+.right-column[
+
+```sh
+#cloud-config
+
+rancher:
+    user_docker:
+        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
+        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
+```
+
+```sh
+docker run --rm swarm create
+```
+
+```sh
+ssh rancher@52.17.12.43 'docker run -d swarm join --addr=$(wget -qO- http://icanhazip.com):2375 token://5957ec97aa4b04b9b44932af2f2795f4'
+```
+
+```sh
+ssh rancher@52.17.12.43 'docker run -d -p 5000:2375 swarm manage token://5957ec97aa4b04b9b44932af2f2795f4'
+```
+
+```sh
+docker -H tcp://52.17.12.43:5000 info
+```
+]
+
+---
+.left-column[
+  ## Pipeline
+### - Git
+]
+
+.right-column[
+
+```sh
+git clone git@github.com:EmileVauge/pacman
+```
+]
+
+
+---
+.left-column[
+  ## Pipeline
+### - Git
+### - Circle CI
+]
+
+.right-column[
+
+```sh
+git clone git@github.com:EmileVauge/pacman
+```
+
+- Connect your GitHub project to Circle CI
+- Connect Circle CI to your Swarm manager
+]
+
+---
+class: center, middle, inverse
+## That's it!
+
+---
+class: center, middle, inverse
+## Merci
+
+http://emilevauge.github.io/opensource-spring-innovation
 
 
 
 
 
     </textarea>
-    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    <script src="remark.js">
     </script>
     <script>
       var slideshow = remark.create();
