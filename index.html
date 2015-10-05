@@ -187,13 +187,12 @@ class: center, middle, inverse
 .right-column[
 
 ```sh
-#cloud-config
+#!/bin/bash
+sudo ros config set user_docker.args "[docker, -d, -s, overlay, -G, docker, -H, unix:///var/run/docker.sock, -H, tcp://0.0.0.0:2375]"
+sudo system-docker restart docker
 
-rancher:
-    user_docker:
-        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
-        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
 ```
+
 ]
 ---
 .left-column[
@@ -205,12 +204,10 @@ rancher:
 .right-column[
 
 ```sh
-#cloud-config
+#!/bin/bash
+sudo ros config set user_docker.args "[docker, -d, -s, overlay, -G, docker, -H, unix:///var/run/docker.sock, -H, tcp://0.0.0.0:2375]"
+sudo system-docker restart docker
 
-rancher:
-    user_docker:
-        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
-        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
 ```
 
 
@@ -229,12 +226,10 @@ docker run --rm swarm create
 .right-column[
 
 ```sh
-#cloud-config
+#!/bin/bash
+sudo ros config set user_docker.args "[docker, -d, -s, overlay, -G, docker, -H, unix:///var/run/docker.sock, -H, tcp://0.0.0.0:2375]"
+sudo system-docker restart docker
 
-rancher:
-    user_docker:
-        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
-        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
 ```
 
 ```sh
@@ -242,7 +237,7 @@ docker run --rm swarm create
 ```
 
 ```sh
-ssh rancher@52.17.12.43 'docker run -d swarm join --addr=$(wget -qO- http://icanhazip.com):2375 token://5957ec97aa4b04b9b44932af2f2795f4'
+ssh rancher@52.17.12.43 'docker pull appropriate/curl&&docker run -d swarm join --addr=$(docker run --rm appropriate/curl curl -s http://icanhazip.com):2375 token://5957ec97aa4b04b9b44932af2f2795f4'
 ```
 ]
 
@@ -258,12 +253,10 @@ ssh rancher@52.17.12.43 'docker run -d swarm join --addr=$(wget -qO- http://ican
 .right-column[
 
 ```sh
-#cloud-config
+#!/bin/bash
+sudo ros config set user_docker.args "[docker, -d, -s, overlay, -G, docker, -H, unix:///var/run/docker.sock, -H, tcp://0.0.0.0:2375]"
+sudo system-docker restart docker
 
-rancher:
-    user_docker:
-        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
-        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
 ```
 
 ```sh
@@ -271,7 +264,7 @@ docker run --rm swarm create
 ```
 
 ```sh
-ssh rancher@52.17.12.43 'docker run -d swarm join --addr=$(wget -qO- http://icanhazip.com):2375 token://5957ec97aa4b04b9b44932af2f2795f4'
+ssh rancher@52.17.12.43 'docker pull appropriate/curl&&docker run -d swarm join --addr=$(docker run --rm appropriate/curl curl -s http://icanhazip.com):2375 token://5957ec97aa4b04b9b44932af2f2795f4'
 ```
 
 ```sh
@@ -292,12 +285,10 @@ ssh rancher@52.17.12.43 'docker run -d -p 5000:2375 swarm manage token://5957ec9
 .right-column[
 
 ```sh
-#cloud-config
+#!/bin/bash
+sudo ros config set user_docker.args "[docker, -d, -s, overlay, -G, docker, -H, unix:///var/run/docker.sock, -H, tcp://0.0.0.0:2375]"
+sudo system-docker restart docker
 
-rancher:
-    user_docker:
-        tls_args: [--tlsverify, --tlscacert=ca.pem, --tlscert=server-cert.pem, --tlskey=server-key.pem, '-H=0.0.0.0:2376']
-        args: [docker, -d, -s, overlay, -G, docker, -H, 'unix:///var/run/docker.sock', -H, 'tcp://0.0.0.0:2375']
 ```
 
 ```sh
@@ -305,7 +296,7 @@ docker run --rm swarm create
 ```
 
 ```sh
-ssh rancher@52.17.12.43 'docker run -d swarm join --addr=$(wget -qO- http://icanhazip.com):2375 token://5957ec97aa4b04b9b44932af2f2795f4'
+ssh rancher@52.17.12.43 'docker pull appropriate/curl&&docker run -d swarm join --addr=$(docker run --rm appropriate/curl curl -s http://icanhazip.com):2375 token://5957ec97aa4b04b9b44932af2f2795f4'
 ```
 
 ```sh
@@ -313,7 +304,7 @@ ssh rancher@52.17.12.43 'docker run -d -p 5000:2375 swarm manage token://5957ec9
 ```
 
 ```sh
-docker -H tcp://52.17.12.43:5000 info
+docker run -it docker:1.7 -H tcp://52.19.203.100:5000 info
 ```
 ]
 
@@ -346,6 +337,31 @@ git clone git@github.com:EmileVauge/pacman
 
 - Connect your GitHub project to Circle CI
 - Connect Circle CI to your Swarm manager
+
+```yaml
+machine:
+  services:
+    - docker
+  environment:
+    REPO: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+dependencies:
+  override:
+    - echo $REPO
+    - docker build -t ${REPO,,} .
+test:
+  override:
+    - docker run -d -p 80:80 ${REPO,,}; sleep 5
+    - curl --retry 10 --retry-delay 5 -v http://localhost:80
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push ${REPO,,}:latest
+      - docker tag ${REPO,,}:latest ${REPO,,}:$CIRCLE_SHA1
+      - docker push ${REPO,,}:$CIRCLE_SHA1
+      - docker -H tcp://$HOST_DEPLOY:5000 run -d -p 80:80 ${REPO,,}
+```
 ]
 
 ---
@@ -358,7 +374,6 @@ class: center, middle, inverse
 class: center, middle, inverse
 ## Merci
 
-http://emilevauge.github.io/opensource-spring-innovation
 
 
 
